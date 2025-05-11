@@ -1,29 +1,69 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import { Colors } from "@/constants/Colors";
+import {
+  ClerkLoaded,
+  ClerkProvider,
+  useAuth,
+  useUser,
+} from "@clerk/clerk-expo";
+import { tokenCache } from "@clerk/clerk-expo/token-cache";
+import { Stack, usePathname, useRouter, useSegments } from "expo-router";
+import { useEffect } from "react";
+import { ActivityIndicator, View } from "react-native";
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+const InitialLayout = () => {
+  const { isLoaded, isSignedIn } = useAuth();
+  const user = useUser();
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+  console.log(user, "user");
 
-  if (!loaded) {
-    // Async font loading only occurs in development.
-    return null;
+  const router = useRouter();
+  const segments = useSegments();
+  const pathName = usePathname();
+
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    console.log(pathName, "pathName");
+
+    const inAuthGroup = segments[0] === "(authenticated)";
+
+    if (isSignedIn && !inAuthGroup) {
+      router.replace("/(authenticated)/(tabs)/today");
+    } else if (!isSignedIn && pathName !== "/") {
+      router.replace("/");
+    }
+
+    console.log("isLoaded", isLoaded);
+    console.log("isSignedIn", isSignedIn);
+  }, [isLoaded, isSignedIn, pathName, segments, router]);
+
+  if (!isLoaded) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
+    );
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <Stack
+      screenOptions={{
+        contentStyle: {
+          backgroundColor: Colors.background,
+        },
+      }}
+    >
+      <Stack.Screen name="index" options={{ headerShown: false }} />
+    </Stack>
+  );
+};
+
+export default function RootLayout() {
+  return (
+    <ClerkProvider tokenCache={tokenCache}>
+      <ClerkLoaded>
+        <InitialLayout />
+      </ClerkLoaded>
+    </ClerkProvider>
   );
 }
