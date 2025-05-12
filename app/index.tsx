@@ -12,27 +12,24 @@ export default function Page() {
   const { startSSOFlow } = useSSO();
   const { top } = useSafeAreaInsets();
 
-  console.log(AuthSession.makeRedirectUri());
-
   const animation = useRef<LottieView>(null);
 
   const openLink = async (url: string) => {
     await WebBrowser.openBrowserAsync(url);
   };
 
+  const redirectUrl = AuthSession.makeRedirectUri({ scheme: "todoistclone" });
+
   const onGoogleAuth = useCallback(async () => {
     try {
       // Start the authentication process by calling `startSSOFlow()`
-      const { createdSessionId, setActive, signIn, signUp } =
-        await startSSOFlow({
-          strategy: "oauth_google",
-          // For web, defaults to current path
-          // For native, you must pass a scheme, like AuthSession.makeRedirectUri({ scheme, path })
-          // For more info, see https://docs.expo.dev/versions/latest/sdk/auth-session/#authsessionmakeredirecturioptions
-          redirectUrl: AuthSession.makeRedirectUri(),
-        });
-
-      console.log("createdSessionId", createdSessionId);
+      const { createdSessionId, setActive } = await startSSOFlow({
+        strategy: "oauth_google",
+        // For web, defaults to current path
+        // For native, you must pass a scheme, like AuthSession.makeRedirectUri({ scheme, path })
+        // For more info, see https://docs.expo.dev/versions/latest/sdk/auth-session/#authsessionmakeredirecturioptions
+        redirectUrl,
+      });
 
       // If sign in was successful, set the active session
       if (createdSessionId) {
@@ -48,7 +45,7 @@ export default function Page() {
       // for more info on error handling
       console.error(JSON.stringify(err, null, 2));
     }
-  }, [startSSOFlow]);
+  }, [startSSOFlow, redirectUrl]);
 
   // const { user } = useUser();
 

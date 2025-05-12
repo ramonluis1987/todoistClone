@@ -1,8 +1,14 @@
 import Tabs from "@/app/components/Tabs";
+import { Colors } from "@/constants/Colors";
 
 export default function TabLayout() {
   return (
-    <Tabs>
+    <Tabs
+      hapticFeedbackEnabled
+      screenOptions={{
+        tabBarActiveTintColor: Colors.primary,
+      }}
+    >
       <Tabs.Screen
         name="today"
         options={{

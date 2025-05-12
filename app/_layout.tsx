@@ -1,10 +1,5 @@
 import { Colors } from "@/constants/Colors";
-import {
-  ClerkLoaded,
-  ClerkProvider,
-  useAuth,
-  useUser,
-} from "@clerk/clerk-expo";
+import { ClerkLoaded, ClerkProvider, useAuth } from "@clerk/clerk-expo";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
 import { Stack, usePathname, useRouter, useSegments } from "expo-router";
 import { useEffect } from "react";
@@ -12,9 +7,7 @@ import { ActivityIndicator, View } from "react-native";
 
 const InitialLayout = () => {
   const { isLoaded, isSignedIn } = useAuth();
-  const user = useUser();
-
-  console.log(user, "user");
+  // const user = useUser();
 
   const router = useRouter();
   const segments = useSegments();
@@ -29,12 +22,9 @@ const InitialLayout = () => {
 
     if (isSignedIn && !inAuthGroup) {
       router.replace("/(authenticated)/(tabs)/today");
-    } else if (!isSignedIn && pathName !== "/") {
+    } else if (!isSignedIn && pathName === "/") {
       router.replace("/");
     }
-
-    console.log("isLoaded", isLoaded);
-    console.log("isSignedIn", isSignedIn);
   }, [isLoaded, isSignedIn, pathName, segments, router]);
 
   if (!isLoaded) {
@@ -54,6 +44,7 @@ const InitialLayout = () => {
       }}
     >
       <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="(authenticated)" options={{ headerShown: false }} />
     </Stack>
   );
 };
