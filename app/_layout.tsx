@@ -4,6 +4,8 @@ import { tokenCache } from "@clerk/clerk-expo/token-cache";
 import { Stack, usePathname, useRouter, useSegments } from "expo-router";
 import { useEffect } from "react";
 import { ActivityIndicator, View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { Toaster } from "sonner-native";
 
 const InitialLayout = () => {
   const { isLoaded, isSignedIn } = useAuth();
@@ -22,7 +24,7 @@ const InitialLayout = () => {
 
     if (isSignedIn && !inAuthGroup) {
       router.replace("/(authenticated)/(tabs)/today");
-    } else if (!isSignedIn && pathName === "/") {
+    } else if (!isSignedIn && pathName !== "/") {
       router.replace("/");
     }
   }, [isLoaded, isSignedIn, pathName, segments, router]);
@@ -53,7 +55,10 @@ export default function RootLayout() {
   return (
     <ClerkProvider tokenCache={tokenCache}>
       <ClerkLoaded>
-        <InitialLayout />
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <Toaster />
+          <InitialLayout />
+        </GestureHandlerRootView>
       </ClerkLoaded>
     </ClerkProvider>
   );
