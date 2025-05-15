@@ -9,7 +9,7 @@ const Layout = () => {
         options={{
           title: "Upcoming",
           headerShadowVisible: false,
-          headerRight: () => <MoreButton />,
+          headerRight: () => <MoreButton pageName="Upcoming" />,
         }}
       />
     </Stack>

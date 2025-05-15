@@ -5,6 +5,7 @@ import { Stack, usePathname, useRouter, useSegments } from "expo-router";
 import { useEffect } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { PaperProvider } from "react-native-paper";
 import { Toaster } from "sonner-native";
 
 const InitialLayout = () => {
@@ -55,10 +56,12 @@ export default function RootLayout() {
   return (
     <ClerkProvider tokenCache={tokenCache}>
       <ClerkLoaded>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <Toaster />
-          <InitialLayout />
-        </GestureHandlerRootView>
+        <PaperProvider>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <Toaster />
+            <InitialLayout />
+          </GestureHandlerRootView>
+        </PaperProvider>
       </ClerkLoaded>
     </ClerkProvider>
   );
