@@ -3,6 +3,7 @@ import { useState } from "react";
 import { StyleSheet } from "react-native";
 import { Divider, IconButton, Menu } from "react-native-paper";
 import { toast } from "sonner-native";
+
 type MoreButtonProps = {
   pageName: string;
 };
@@ -14,9 +15,10 @@ const MoreButton = ({ pageName }: MoreButtonProps) => {
   const closeMenu = () => setVisible(false);
 
   const copyToClipboard = async () => {
-    const path = `myapp://(authenticated)/(tabs)/${pageName.toLowerCase()}`;
+    const path = `todoistclone://(authenticated)/(tabs)/${pageName.toLowerCase()}`;
     await Clipboard.setStringAsync(path);
     toast.success(`Page Link copied to your clipboard`);
+    closeMenu();
   };
 
   return (
@@ -25,7 +27,7 @@ const MoreButton = ({ pageName }: MoreButtonProps) => {
       onDismiss={closeMenu}
       anchor={<IconButton icon="dots-vertical" onPress={openMenu} />}
     >
-      <Menu.Item onPress={() => console.log("Copy")} title="Copy" />
+      <Menu.Item onPress={copyToClipboard} title="Copy" />
       <Divider />
       <Menu.Item
         onPress={() => console.log("Select Tasks")}
