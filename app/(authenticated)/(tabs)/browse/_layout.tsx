@@ -1,10 +1,11 @@
 import { Colors } from "@/constants/Colors";
 import { useUser } from "@clerk/clerk-expo";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { Link, Stack } from "expo-router";
-import { Image } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { Link, Stack, useRouter } from "expo-router";
+import { Button, Image, TouchableOpacity } from "react-native";
 
 const Layout = () => {
+  const router = useRouter();
   return (
     <Stack
       screenOptions={{
@@ -20,6 +21,28 @@ const Layout = () => {
           headerRight: () => <HeaderRight />,
         }}
       />
+      <Stack.Screen
+        name="settings"
+        options={{
+          title: "Settings",
+          presentation: "modal",
+          headerTransparent: true,
+          headerRight: () => (
+            <Button
+              title="Done"
+              onPress={() => router.dismiss()}
+              color={Colors.primary}
+            />
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="new-project"
+        options={{
+          presentation: "modal",
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 };
@@ -30,15 +53,17 @@ const HeaderLeft = () => {
   return (
     <Image
       source={{ uri: user?.imageUrl }}
-      style={{ width: 40, height: 40, borderRadius: 20 }}
+      style={{ width: 32, height: 32, borderRadius: 16 }}
     />
   );
 };
 
 const HeaderRight = () => {
   return (
-    <Link href="/browse/settings">
-      <Ionicons name="settings-outline" size={24} />
+    <Link href="/browse/settings" asChild>
+      <TouchableOpacity>
+        <Ionicons name="settings-outline" size={24} color={Colors.primary} />
+      </TouchableOpacity>
     </Link>
   );
 };

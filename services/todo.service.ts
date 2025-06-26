@@ -23,4 +23,35 @@ const getTodos = async () => {
   return todosWithProjects || [];
 };
 
-export { getTodos };
+const markAsCompleted = async (todoId: number) => {
+  const db = await AsyncStorage.getItem("db");
+
+  if (!db) {
+    return;
+  }
+
+  const parsedDb = JSON.parse(db);
+  console.log("Parsed DB:", parsedDb);
+  const updatedTodos = parsedDb.todos.map((todo: Todo) => {
+    if (todo.id === todoId) {
+      return {
+        ...todo,
+        completed: !todo.completed,
+      };
+    }
+    return todo;
+  });
+
+  await AsyncStorage.removeItem("db");
+
+  console.log("Updated todos:", updatedTodos);
+
+  await AsyncStorage.setItem(
+    "db",
+    JSON.stringify({ ...parsedDb, todos: updatedTodos })
+  );
+
+  return;
+};
+
+export { getTodos, markAsCompleted };

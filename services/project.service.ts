@@ -11,4 +11,22 @@ const getProjects = async () => {
   return parsedDb.projects || [];
 };
 
-export { getProjects };
+const deleteProject = async (projectId: number) => {
+  const db = await AsyncStorage.getItem("db");
+  if (!db) {
+    return;
+  }
+
+  const parsedDb = JSON.parse(db);
+  const updatedProjects = parsedDb.projects.filter(
+    (project: { id: number }) => project.id !== projectId
+  );
+
+  await AsyncStorage.setItem(
+    "db",
+    JSON.stringify({ ...parsedDb, projects: updatedProjects })
+  );
+  return updatedProjects;
+};
+
+export { deleteProject, getProjects };
